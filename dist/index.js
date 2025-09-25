@@ -27650,40 +27650,41 @@ function printRunnerInformation() {
     var _a;
     // Basic runner information (always visible)
     (0, core_1.startGroup)('Runner Information');
-    (0, core_1.info)(`Node.js version: ${process.version}`);
-    (0, core_1.info)(`Platform: ${process.platform}`);
-    (0, core_1.info)(`Architecture: ${process.arch}`);
-    (0, core_1.info)(`Working Directory: ${process.cwd()}`);
+    (0, core_1.info)(`Node.js version.  = ${process.version}`);
+    (0, core_1.info)(`Platform          = ${process.platform}`);
+    (0, core_1.info)(`Architecture.     = ${process.arch}`);
+    (0, core_1.info)(`Working Directory = ${process.cwd()}`);
+    (0, core_1.info)("");
+    (0, core_1.endGroup)();
     // Debug information in a collapsible group
     (0, core_1.startGroup)('Debug Information');
-    (0, core_1.info)(`Process ID: ${process.pid}`);
-    (0, core_1.info)(`Parent Process ID: ${process.ppid}`);
-    (0, core_1.info)(`User ID: ${process.getuid ? process.getuid() : 'N/A'}`);
-    (0, core_1.info)(`Group ID: ${process.getgid ? process.getgid() : 'N/A'}`);
-    (0, core_1.info)(`Memory Usage: ${JSON.stringify(process.memoryUsage(), null, 2)}`);
-    (0, core_1.info)(`CPU Usage: ${JSON.stringify(process.cpuUsage(), null, 2)}`);
-    (0, core_1.info)(`Uptime: ${process.uptime()} seconds`);
-    (0, core_1.info)(`Command Line Args: ${JSON.stringify(process.argv)}`);
-    (0, core_1.info)(`Node.js Executable Path: ${process.execPath}`);
-    (0, core_1.info)(`Node.js Execute Arguments: ${JSON.stringify(process.execArgv)}`);
+    (0, core_1.info)(`Process ID                = ${process.pid}`);
+    (0, core_1.info)(`Parent Process ID         = ${process.ppid}`);
+    (0, core_1.info)(`User ID                   = ${process.getuid ? process.getuid() : 'N/A'}`);
+    (0, core_1.info)(`Group ID                  = ${process.getgid ? process.getgid() : 'N/A'}`);
+    (0, core_1.info)(`Memory Usage              = ${JSON.stringify(process.memoryUsage(), null, 2)}`);
+    (0, core_1.info)(`CPU Usage                 = ${JSON.stringify(process.cpuUsage(), null, 2)}`);
+    (0, core_1.info)(`Uptime                    = ${process.uptime()} seconds`);
+    (0, core_1.info)(`Command Line Args         = ${JSON.stringify(process.argv)}`);
+    (0, core_1.info)(`Node.js Executable Path   = ${process.execPath}`);
+    (0, core_1.info)(`Node.js Execute Arguments = ${JSON.stringify(process.execArgv)}`);
     // Additional system information
     if (process.platform !== 'win32') {
         try {
             const os = __nccwpck_require__(857);
-            (0, core_1.info)(`OS Type: ${os.type()}`);
-            (0, core_1.info)(`OS Release: ${os.release()}`);
-            (0, core_1.info)(`OS Hostname: ${os.hostname()}`);
-            (0, core_1.info)(`OS Total Memory: ${(os.totalmem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
-            (0, core_1.info)(`OS Free Memory: ${(os.freemem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
-            (0, core_1.info)(`OS Load Average: ${JSON.stringify(os.loadavg())}`);
-            (0, core_1.info)(`OS CPU Count: ${os.cpus().length}`);
-            (0, core_1.info)(`OS CPU Model: ${((_a = os.cpus()[0]) === null || _a === void 0 ? void 0 : _a.model) || 'Unknown'}`);
+            (0, core_1.info)(`OS Type                   = ${os.type()}`);
+            (0, core_1.info)(`OS Release                = ${os.release()}`);
+            (0, core_1.info)(`OS Hostname               = ${os.hostname()}`);
+            (0, core_1.info)(`OS Total Memory           = ${(os.totalmem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
+            (0, core_1.info)(`OS Free Memory            = ${(os.freemem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
+            (0, core_1.info)(`OS Load Average           = ${JSON.stringify(os.loadavg())}`);
+            (0, core_1.info)(`OS CPU Count              = ${os.cpus().length}`);
+            (0, core_1.info)(`OS CPU Model              = ${((_a = os.cpus()[0]) === null || _a === void 0 ? void 0 : _a.model) || 'Unknown'}`);
         }
         catch (error) {
-            (0, core_1.info)(`OS Info Error: ${error}`);
+            (0, core_1.warning)(`OS Info Error: ${error}`);
         }
     }
-    (0, core_1.endGroup)();
     (0, core_1.endGroup)();
 }
 /**

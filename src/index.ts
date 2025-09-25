@@ -1,4 +1,4 @@
-import { getInput, info, startGroup, endGroup } from '@actions/core';
+import { warning, info, startGroup, endGroup } from '@actions/core';
 
 /**
  * Interface for key-value pairs
@@ -110,42 +110,43 @@ function printAllEnvironmentVariables(): void {
 function printRunnerInformation(): void {
   // Basic runner information (always visible)
   startGroup('Runner Information');
-  info(`Node.js version: ${process.version}`);
-  info(`Platform: ${process.platform}`);
-  info(`Architecture: ${process.arch}`);
-  info(`Working Directory: ${process.cwd()}`);
+  info(`Node.js version.  = ${process.version}`);
+  info(`Platform          = ${process.platform}`);
+  info(`Architecture.     = ${process.arch}`);
+  info(`Working Directory = ${process.cwd()}`);
+  info("")
+  endGroup();
   
   // Debug information in a collapsible group
   startGroup('Debug Information');
-  info(`Process ID: ${process.pid}`);
-  info(`Parent Process ID: ${process.ppid}`);
-  info(`User ID: ${process.getuid ? process.getuid() : 'N/A'}`);
-  info(`Group ID: ${process.getgid ? process.getgid() : 'N/A'}`);
-  info(`Memory Usage: ${JSON.stringify(process.memoryUsage(), null, 2)}`);
-  info(`CPU Usage: ${JSON.stringify(process.cpuUsage(), null, 2)}`);
-  info(`Uptime: ${process.uptime()} seconds`);
-  info(`Command Line Args: ${JSON.stringify(process.argv)}`);
-  info(`Node.js Executable Path: ${process.execPath}`);
-  info(`Node.js Execute Arguments: ${JSON.stringify(process.execArgv)}`);
+  info(`Process ID                = ${process.pid}`);
+  info(`Parent Process ID         = ${process.ppid}`);
+  info(`User ID                   = ${process.getuid ? process.getuid() : 'N/A'}`);
+  info(`Group ID                  = ${process.getgid ? process.getgid() : 'N/A'}`);
+  info(`Memory Usage              = ${JSON.stringify(process.memoryUsage(), null, 2)}`);
+  info(`CPU Usage                 = ${JSON.stringify(process.cpuUsage(), null, 2)}`);
+  info(`Uptime                    = ${process.uptime()} seconds`);
+  info(`Command Line Args         = ${JSON.stringify(process.argv)}`);
+  info(`Node.js Executable Path   = ${process.execPath}`);
+  info(`Node.js Execute Arguments = ${JSON.stringify(process.execArgv)}`);
   
   // Additional system information
   if (process.platform !== 'win32') {
     try {
       const os = require('os');
-      info(`OS Type: ${os.type()}`);
-      info(`OS Release: ${os.release()}`);
-      info(`OS Hostname: ${os.hostname()}`);
-      info(`OS Total Memory: ${(os.totalmem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
-      info(`OS Free Memory: ${(os.freemem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
-      info(`OS Load Average: ${JSON.stringify(os.loadavg())}`);
-      info(`OS CPU Count: ${os.cpus().length}`);
-      info(`OS CPU Model: ${os.cpus()[0]?.model || 'Unknown'}`);
+      info(`OS Type                   = ${os.type()}`);
+      info(`OS Release                = ${os.release()}`);
+      info(`OS Hostname               = ${os.hostname()}`);
+      info(`OS Total Memory           = ${(os.totalmem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
+      info(`OS Free Memory            = ${(os.freemem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
+      info(`OS Load Average           = ${JSON.stringify(os.loadavg())}`);
+      info(`OS CPU Count              = ${os.cpus().length}`);
+      info(`OS CPU Model              = ${os.cpus()[0]?.model || 'Unknown'}`);
     } catch (error) {
-      info(`OS Info Error: ${error}`);
+      warning(`OS Info Error: ${error}`);
     }
   }
   
-  endGroup();
   endGroup();
 }
 
