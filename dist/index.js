@@ -27592,10 +27592,17 @@ function printGreeting() {
 function printAllEnvironmentVariables() {
     (0, core_1.info)('=== All Environment Variables ===');
     const { envVars, maxValueSize } = getAllEnvironmentVariables();
-    // Group environment variables by prefix
+    // Group environment variables by prefix and separate single variables
     const groupedVars = new Map();
+    const singleVars = [];
     envVars.forEach(({ key, value }) => {
-        const prefix = key.includes('_') ? key.split('_')[0] : 'OTHER';
+        // If the key doesn't contain underscore, put it directly in single variables
+        if (!key.includes('_')) {
+            singleVars.push({ key, value });
+            return;
+        }
+        // Otherwise, group by prefix
+        const prefix = key.split('_')[0];
         if (!groupedVars.has(prefix)) {
             groupedVars.set(prefix, []);
         }
@@ -27603,12 +27610,12 @@ function printAllEnvironmentVariables() {
     });
     // Separate prefixes with multiple variables from single variables
     const multipleVarPrefixes = [];
-    const singleVars = [];
     groupedVars.forEach((vars, prefix) => {
         if (vars.length > 1) {
             multipleVarPrefixes.push(prefix);
         }
         else {
+            // Add single variables from prefixes to the single variables array
             singleVars.push(...vars);
         }
     });
@@ -27616,21 +27623,25 @@ function printAllEnvironmentVariables() {
     multipleVarPrefixes.sort();
     // Print single variables in generic group
     if (singleVars.length > 0) {
-        (0, core_1.info)('');
-        (0, core_1.info)('--- Variables ---');
+        // info('');
+        // info('--- Variables ---');
+        (0, core_1.startGroup)(`--- Variables ---`);
         singleVars.sort((a, b) => a.key.localeCompare(b.key));
         singleVars.forEach(({ key, value }) => {
             (0, core_1.info)(`${key} = ${value}`);
         });
+        (0, core_1.endGroup)();
     }
     // Print groups with multiple variables
     multipleVarPrefixes.forEach(prefix => {
-        (0, core_1.info)('');
-        (0, core_1.info)(`--- ${prefix} Variables ---`);
+        // info('');
+        // info(`--- ${prefix} Variables ---`);
+        (0, core_1.startGroup)(`--- ${prefix} Variables ---`);
         const vars = groupedVars.get(prefix);
         vars.forEach(({ key, value }) => {
             (0, core_1.info)(`${key} = ${value}`);
         });
+        (0, core_1.endGroup)();
     });
 }
 /**
@@ -27654,9 +27665,9 @@ function run() {
         printRunnerInformation();
         (0, core_1.endGroup)();
         // Print environment variables in grouped format
-        (0, core_1.startGroup)('Environment Variables');
+        // startGroup('Environment Variables');
         printAllEnvironmentVariables();
-        (0, core_1.endGroup)();
+        // endGroup();
     }
     catch (error) {
         console.error('Error running action:', error);

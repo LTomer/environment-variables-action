@@ -53,11 +53,19 @@ function printAllEnvironmentVariables(): void {
   info('=== All Environment Variables ===');
   const { envVars, maxValueSize } = getAllEnvironmentVariables();
   
-  // Group environment variables by prefix
+  // Group environment variables by prefix and separate single variables
   const groupedVars = new Map<string, KeyValuePair[]>();
+  const singleVars: KeyValuePair[] = [];
   
   envVars.forEach(({ key, value }) => {
-    const prefix = key.includes('_') ? key.split('_')[0] : 'OTHER';
+    // If the key doesn't contain underscore, put it directly in single variables
+    if (!key.includes('_')) {
+      singleVars.push({ key, value });
+      return;
+    }
+    
+    // Otherwise, group by prefix
+    const prefix = key.split('_')[0];
     
     if (!groupedVars.has(prefix)) {
       groupedVars.set(prefix, []);
@@ -67,12 +75,12 @@ function printAllEnvironmentVariables(): void {
   
   // Separate prefixes with multiple variables from single variables
   const multipleVarPrefixes: string[] = [];
-  const singleVars: KeyValuePair[] = [];
   
   groupedVars.forEach((vars, prefix) => {
     if (vars.length > 1) {
       multipleVarPrefixes.push(prefix);
     } else {
+      // Add single variables from prefixes to the single variables array
       singleVars.push(...vars);
     }
   });
@@ -82,22 +90,27 @@ function printAllEnvironmentVariables(): void {
   
   // Print single variables in generic group
   if (singleVars.length > 0) {
-    info('');
-    info('--- Variables ---');
+    // info('');
+    // info('--- Variables ---');
+    startGroup(`--- Variables ---`);
     singleVars.sort((a, b) => a.key.localeCompare(b.key));
     singleVars.forEach(({ key, value }) => {
       info(`${key} = ${value}`);
     });
+    endGroup();
   }
   
   // Print groups with multiple variables
   multipleVarPrefixes.forEach(prefix => {
-    info('');
-    info(`--- ${prefix} Variables ---`);
+    // info('');
+    // info(`--- ${prefix} Variables ---`);
+
+    startGroup(`--- ${prefix} Variables ---`);
     const vars = groupedVars.get(prefix)!;
     vars.forEach(({ key, value }) => {
       info(`${key} = ${value}`);
     });
+    endGroup();
   });
 }
 
@@ -125,9 +138,9 @@ function run(): void {
     endGroup();
 
     // Print environment variables in grouped format
-    startGroup('Environment Variables');
+    // startGroup('Environment Variables');
     printAllEnvironmentVariables();
-    endGroup();
+    // endGroup();
   } catch (error) {
     console.error('Error running action:', error);
     process.exit(1);
