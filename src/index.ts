@@ -47,30 +47,57 @@ function printGreeting(): void {
 }
 
 /**
- * Prints all environment variables in alphabetical order
+ * Prints all environment variables grouped by prefix
  */
 function printAllEnvironmentVariables(): void {
   info('=== All Environment Variables ===');
   const { envVars, maxValueSize } = getAllEnvironmentVariables();
-  //info(`Total environment variables: ${envVars.length}`);
-  //info(`Maximum value size: ${maxValueSize} characters`);
-  //info('');
   
-  let previousPrefix = '';
-  envVars.forEach(({ key, value }, index) => {
-    // Get the prefix (part before first underscore, or the whole key if no underscore)
-    const currentPrefix = key.includes('_') ? key.split('_')[0] : key;
+  // Group environment variables by prefix
+  const groupedVars = new Map<string, KeyValuePair[]>();
+  
+  envVars.forEach(({ key, value }) => {
+    const prefix = key.includes('_') ? key.split('_')[0] : 'OTHER';
     
-    // Add empty line if prefix changed and it's not the first item
-    if (index > 0 && currentPrefix !== previousPrefix) {
-      info('');
+    if (!groupedVars.has(prefix)) {
+      groupedVars.set(prefix, []);
     }
-    
-    //var space = '.'.repeat(maxValueSize - value.length + 3);
-    info(`${key} = ${value}`);
-    
-    // Update previous prefix for next iteration
-    previousPrefix = currentPrefix;
+    groupedVars.get(prefix)!.push({ key, value });
+  });
+  
+  // Separate prefixes with multiple variables from single variables
+  const multipleVarPrefixes: string[] = [];
+  const singleVars: KeyValuePair[] = [];
+  
+  groupedVars.forEach((vars, prefix) => {
+    if (vars.length > 1) {
+      multipleVarPrefixes.push(prefix);
+    } else {
+      singleVars.push(...vars);
+    }
+  });
+  
+  // Sort prefixes alphabetically
+  multipleVarPrefixes.sort();
+  
+  // Print single variables in generic group
+  if (singleVars.length > 0) {
+    info('');
+    info('--- Variables ---');
+    singleVars.sort((a, b) => a.key.localeCompare(b.key));
+    singleVars.forEach(({ key, value }) => {
+      info(`${key} = ${value}`);
+    });
+  }
+  
+  // Print groups with multiple variables
+  multipleVarPrefixes.forEach(prefix => {
+    info('');
+    info(`--- ${prefix} Variables ---`);
+    const vars = groupedVars.get(prefix)!;
+    vars.forEach(({ key, value }) => {
+      info(`${key} = ${value}`);
+    });
   });
 }
 
