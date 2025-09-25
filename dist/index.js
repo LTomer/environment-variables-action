@@ -27647,45 +27647,42 @@ function printAllEnvironmentVariables() {
  * Prints runner environment information
  */
 function printRunnerInformation() {
+    // Basic runner information
+    const basicInfo = [
+        { key: 'Node.js version', value: process.version },
+        { key: 'Platform', value: process.platform },
+        { key: 'Architecture', value: process.arch },
+        { key: 'Working Directory', value: process.cwd() }
+    ];
+    printVariablesToScreen('Runner Information', basicInfo);
+}
+function printSystemInformation() {
     var _a;
-    // Basic runner information (always visible)
-    (0, core_1.startGroup)('Runner Information');
-    (0, core_1.info)(`Node.js version.  = ${process.version}`);
-    (0, core_1.info)(`Platform          = ${process.platform}`);
-    (0, core_1.info)(`Architecture.     = ${process.arch}`);
-    (0, core_1.info)(`Working Directory = ${process.cwd()}`);
-    (0, core_1.info)("");
-    (0, core_1.endGroup)();
-    // Debug information in a collapsible group
-    (0, core_1.startGroup)('Debug Information');
-    (0, core_1.info)(`Process ID                = ${process.pid}`);
-    (0, core_1.info)(`Parent Process ID         = ${process.ppid}`);
-    (0, core_1.info)(`User ID                   = ${process.getuid ? process.getuid() : 'N/A'}`);
-    (0, core_1.info)(`Group ID                  = ${process.getgid ? process.getgid() : 'N/A'}`);
-    (0, core_1.info)(`Memory Usage              = ${JSON.stringify(process.memoryUsage(), null, 2)}`);
-    (0, core_1.info)(`CPU Usage                 = ${JSON.stringify(process.cpuUsage(), null, 2)}`);
-    (0, core_1.info)(`Uptime                    = ${process.uptime()} seconds`);
-    (0, core_1.info)(`Command Line Args         = ${JSON.stringify(process.argv)}`);
-    (0, core_1.info)(`Node.js Executable Path   = ${process.execPath}`);
-    (0, core_1.info)(`Node.js Execute Arguments = ${JSON.stringify(process.execArgv)}`);
+    // System information
+    const systemInfo = [
+        { key: 'Process ID', value: process.pid.toString() },
+        { key: 'Parent Process ID', value: process.ppid.toString() },
+        { key: 'User ID', value: process.getuid ? process.getuid().toString() : 'N/A' },
+        { key: 'Group ID', value: process.getgid ? process.getgid().toString() : 'N/A' },
+        { key: 'Memory Usage', value: JSON.stringify(process.memoryUsage(), null, 2) },
+        { key: 'CPU Usage', value: JSON.stringify(process.cpuUsage(), null, 2) },
+        { key: 'Uptime', value: `${process.uptime()} seconds` },
+        { key: 'Command Line Args', value: JSON.stringify(process.argv) },
+        { key: 'Node.js Executable Path', value: process.execPath },
+        { key: 'Node.js Execute Arguments', value: JSON.stringify(process.execArgv) }
+    ];
     // Additional system information
     if (process.platform !== 'win32') {
         try {
             const os = __nccwpck_require__(857);
-            (0, core_1.info)(`OS Type                   = ${os.type()}`);
-            (0, core_1.info)(`OS Release                = ${os.release()}`);
-            (0, core_1.info)(`OS Hostname               = ${os.hostname()}`);
-            (0, core_1.info)(`OS Total Memory           = ${(os.totalmem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
-            (0, core_1.info)(`OS Free Memory            = ${(os.freemem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
-            (0, core_1.info)(`OS Load Average           = ${JSON.stringify(os.loadavg())}`);
-            (0, core_1.info)(`OS CPU Count              = ${os.cpus().length}`);
-            (0, core_1.info)(`OS CPU Model              = ${((_a = os.cpus()[0]) === null || _a === void 0 ? void 0 : _a.model) || 'Unknown'}`);
+            systemInfo.push({ key: 'OS Type', value: os.type() }, { key: 'OS Release', value: os.release() }, { key: 'OS Hostname', value: os.hostname() }, { key: 'OS Total Memory', value: `${(os.totalmem() / 1024 / 1024 / 1024).toFixed(2)} GB` }, { key: 'OS Free Memory', value: `${(os.freemem() / 1024 / 1024 / 1024).toFixed(2)} GB` }, { key: 'OS Load Average', value: JSON.stringify(os.loadavg()) }, { key: 'OS CPU Count', value: os.cpus().length.toString() }, { key: 'OS CPU Model', value: ((_a = os.cpus()[0]) === null || _a === void 0 ? void 0 : _a.model) || 'Unknown' });
         }
         catch (error) {
-            (0, core_1.warning)(`OS Info Error: ${error}`);
+            systemInfo.push({ key: 'OS Info Error', value: (error === null || error === void 0 ? void 0 : error.toString()) || 'Unknown error' });
         }
     }
-    (0, core_1.endGroup)();
+    // Print using the regular print function
+    printVariablesToScreen('System Information', systemInfo);
 }
 /**
  * Main function that orchestrates the action execution
@@ -27697,6 +27694,9 @@ function run() {
         (0, core_1.info)('');
         // Print environment variables in grouped format
         printAllEnvironmentVariables();
+        (0, core_1.info)('');
+        // Print system information
+        printSystemInformation();
     }
     catch (error) {
         console.error('Error running action:', error);

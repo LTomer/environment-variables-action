@@ -108,46 +108,53 @@ function printAllEnvironmentVariables(): void {
  * Prints runner environment information
  */
 function printRunnerInformation(): void {
-  // Basic runner information (always visible)
-  startGroup('Runner Information');
-  info(`Node.js version.  = ${process.version}`);
-  info(`Platform          = ${process.platform}`);
-  info(`Architecture.     = ${process.arch}`);
-  info(`Working Directory = ${process.cwd()}`);
-  info("")
-  endGroup();
-  
-  // Debug information in a collapsible group
-  startGroup('Debug Information');
-  info(`Process ID                = ${process.pid}`);
-  info(`Parent Process ID         = ${process.ppid}`);
-  info(`User ID                   = ${process.getuid ? process.getuid() : 'N/A'}`);
-  info(`Group ID                  = ${process.getgid ? process.getgid() : 'N/A'}`);
-  info(`Memory Usage              = ${JSON.stringify(process.memoryUsage(), null, 2)}`);
-  info(`CPU Usage                 = ${JSON.stringify(process.cpuUsage(), null, 2)}`);
-  info(`Uptime                    = ${process.uptime()} seconds`);
-  info(`Command Line Args         = ${JSON.stringify(process.argv)}`);
-  info(`Node.js Executable Path   = ${process.execPath}`);
-  info(`Node.js Execute Arguments = ${JSON.stringify(process.execArgv)}`);
-  
+  // Basic runner information
+  const basicInfo: KeyValuePair[] = [
+    { key: 'Node.js version', value: process.version },
+    { key: 'Platform', value: process.platform },
+    { key: 'Architecture', value: process.arch },
+    { key: 'Working Directory', value: process.cwd() }
+  ];
+  printVariablesToScreen('Runner Information', basicInfo);
+}
+
+function printSystemInformation(): void {
+
+  // System information
+  const systemInfo: KeyValuePair[] = [
+    { key: 'Process ID', value: process.pid.toString() },
+    { key: 'Parent Process ID', value: process.ppid.toString() },
+    { key: 'User ID', value: process.getuid ? process.getuid().toString() : 'N/A' },
+    { key: 'Group ID', value: process.getgid ? process.getgid().toString() : 'N/A' },
+    { key: 'Memory Usage', value: JSON.stringify(process.memoryUsage(), null, 2) },
+    { key: 'CPU Usage', value: JSON.stringify(process.cpuUsage(), null, 2) },
+    { key: 'Uptime', value: `${process.uptime()} seconds` },
+    { key: 'Command Line Args', value: JSON.stringify(process.argv) },
+    { key: 'Node.js Executable Path', value: process.execPath },
+    { key: 'Node.js Execute Arguments', value: JSON.stringify(process.execArgv) }
+  ];
+
   // Additional system information
   if (process.platform !== 'win32') {
     try {
       const os = require('os');
-      info(`OS Type                   = ${os.type()}`);
-      info(`OS Release                = ${os.release()}`);
-      info(`OS Hostname               = ${os.hostname()}`);
-      info(`OS Total Memory           = ${(os.totalmem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
-      info(`OS Free Memory            = ${(os.freemem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
-      info(`OS Load Average           = ${JSON.stringify(os.loadavg())}`);
-      info(`OS CPU Count              = ${os.cpus().length}`);
-      info(`OS CPU Model              = ${os.cpus()[0]?.model || 'Unknown'}`);
+      systemInfo.push(
+        { key: 'OS Type', value: os.type() },
+        { key: 'OS Release', value: os.release() },
+        { key: 'OS Hostname', value: os.hostname() },
+        { key: 'OS Total Memory', value: `${(os.totalmem() / 1024 / 1024 / 1024).toFixed(2)} GB` },
+        { key: 'OS Free Memory', value: `${(os.freemem() / 1024 / 1024 / 1024).toFixed(2)} GB` },
+        { key: 'OS Load Average', value: JSON.stringify(os.loadavg()) },
+        { key: 'OS CPU Count', value: os.cpus().length.toString() },
+        { key: 'OS CPU Model', value: os.cpus()[0]?.model || 'Unknown' }
+      );
     } catch (error) {
-      warning(`OS Info Error: ${error}`);
+      systemInfo.push({ key: 'OS Info Error', value: error?.toString() || 'Unknown error' });
     }
   }
-  
-  endGroup();
+
+  // Print using the regular print function
+  printVariablesToScreen('System Information', systemInfo);
 }
 
 /**
@@ -162,6 +169,11 @@ function run(): void {
 
     // Print environment variables in grouped format
     printAllEnvironmentVariables();
+
+    info('')
+
+    // Print system information
+    printSystemInformation();
   } catch (error) {
     console.error('Error running action:', error);
     process.exit(1);
