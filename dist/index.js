@@ -27562,8 +27562,44 @@ var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(7484);
+// Get input from action
 const name = (0, core_1.getInput)('name');
+// Print greeting
 console.log(`Hello ${name}!`);
+// Print environment variables in a grouped format
+(0, core_1.startGroup)('Environment Variables');
+// Print all environment variables
+(0, core_1.info)('=== All Environment Variables ===');
+Object.keys(process.env)
+    .sort()
+    .forEach(key => {
+    const value = process.env[key];
+    (0, core_1.info)(`${key}=${value}`);
+});
+// Print GitHub-specific environment variables in a separate section
+(0, core_1.startGroup)('GitHub-specific Environment Variables');
+const githubVars = Object.keys(process.env)
+    .filter(key => key.startsWith('GITHUB_'))
+    .sort();
+if (githubVars.length > 0) {
+    (0, core_1.info)('=== GitHub Environment Variables ===');
+    githubVars.forEach(key => {
+        const value = process.env[key];
+        (0, core_1.info)(`${key}=${value}`);
+    });
+}
+else {
+    (0, core_1.info)('No GitHub-specific environment variables found');
+}
+(0, core_1.endGroup)();
+(0, core_1.endGroup)();
+// Print runner environment info
+(0, core_1.startGroup)('Runner Information');
+(0, core_1.info)(`Node.js version: ${process.version}`);
+(0, core_1.info)(`Platform: ${process.platform}`);
+(0, core_1.info)(`Architecture: ${process.arch}`);
+(0, core_1.info)(`Working Directory: ${process.cwd()}`);
+(0, core_1.endGroup)();
 
 })();
 
