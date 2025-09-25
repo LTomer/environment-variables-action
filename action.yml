@@ -1,5 +1,5 @@
-name: 'My Custom Action'
-description: 'Say Hello'
+name: 'Environment Variables'
+description: 'Shows all environment variables grouped by prefix'
 author: 'LTomer'
 
 runs:
