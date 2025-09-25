@@ -27562,44 +27562,85 @@ var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(7484);
-// Get input from action
-const name = (0, core_1.getInput)('name');
-// Print greeting
-console.log(`Hello ${name}!`);
-// Print environment variables in a grouped format
-(0, core_1.startGroup)('Environment Variables');
-// Print all environment variables
-(0, core_1.info)('=== All Environment Variables ===');
-Object.keys(process.env)
-    .sort()
-    .forEach(key => {
-    const value = process.env[key];
-    (0, core_1.info)(`${key}=${value}`);
-});
-// Print GitHub-specific environment variables in a separate section
-(0, core_1.startGroup)('GitHub-specific Environment Variables');
-const githubVars = Object.keys(process.env)
-    .filter(key => key.startsWith('GITHUB_'))
-    .sort();
-if (githubVars.length > 0) {
-    (0, core_1.info)('=== GitHub Environment Variables ===');
-    githubVars.forEach(key => {
-        const value = process.env[key];
-        (0, core_1.info)(`${key}=${value}`);
+/**
+ * Gets all environment variables as a list of key-value pairs
+ * @returns Object containing array of key-value pairs sorted by key and max value size
+ */
+function getAllEnvironmentVariables() {
+    const envVars = Object.keys(process.env)
+        .sort()
+        .map(key => ({
+        key,
+        value: process.env[key] || ''
+    }));
+    const maxValueSize = envVars.reduce((max, { value }) => Math.max(max, value.length), 0);
+    return {
+        envVars,
+        maxValueSize
+    };
+}
+/**
+ * Prints a greeting message with the provided name
+ */
+function printGreeting() {
+    const name = (0, core_1.getInput)('name');
+    console.log(`Hello ${name}!`);
+}
+/**
+ * Prints all environment variables in alphabetical order
+ */
+function printAllEnvironmentVariables() {
+    (0, core_1.info)('=== All Environment Variables ===');
+    const { envVars, maxValueSize } = getAllEnvironmentVariables();
+    //info(`Total environment variables: ${envVars.length}`);
+    //info(`Maximum value size: ${maxValueSize} characters`);
+    //info('');
+    let previousPrefix = '';
+    envVars.forEach(({ key, value }) => {
+        // Get the prefix (part before first underscore)
+        const currentPrefix = key.split('_')[0];
+        // Add empty line if prefix changed and it's not the first item
+        if (previousPrefix && currentPrefix !== previousPrefix) {
+            (0, core_1.info)('');
+        }
+        var space = '.'.repeat(maxValueSize - value.length + 3);
+        (0, core_1.info)(`${key} ${space} ${value}`);
+        // Update previous prefix for next iteration
+        previousPrefix = currentPrefix;
     });
 }
-else {
-    (0, core_1.info)('No GitHub-specific environment variables found');
+/**
+ * Prints runner environment information
+ */
+function printRunnerInformation() {
+    (0, core_1.info)(`Node.js version: ${process.version}`);
+    (0, core_1.info)(`Platform: ${process.platform}`);
+    (0, core_1.info)(`Architecture: ${process.arch}`);
+    (0, core_1.info)(`Working Directory: ${process.cwd()}`);
 }
-(0, core_1.endGroup)();
-(0, core_1.endGroup)();
-// Print runner environment info
-(0, core_1.startGroup)('Runner Information');
-(0, core_1.info)(`Node.js version: ${process.version}`);
-(0, core_1.info)(`Platform: ${process.platform}`);
-(0, core_1.info)(`Architecture: ${process.arch}`);
-(0, core_1.info)(`Working Directory: ${process.cwd()}`);
-(0, core_1.endGroup)();
+/**
+ * Main function that orchestrates the action execution
+ */
+function run() {
+    try {
+        // Print greeting
+        printGreeting();
+        // Print runner information
+        (0, core_1.startGroup)('Runner Information');
+        printRunnerInformation();
+        (0, core_1.endGroup)();
+        // Print environment variables in grouped format
+        (0, core_1.startGroup)('Environment Variables');
+        printAllEnvironmentVariables();
+        (0, core_1.endGroup)();
+    }
+    catch (error) {
+        console.error('Error running action:', error);
+        process.exit(1);
+    }
+}
+// Execute the main function
+run();
 
 })();
 

@@ -1,46 +1,111 @@
 import { getInput, info, startGroup, endGroup } from '@actions/core';
 
-// Get input from action
-const name = getInput('name');
-
-// Print greeting
-console.log(`Hello ${name}!`);
-
-// Print environment variables in a grouped format
-startGroup('Environment Variables');
-
-// Print all environment variables
-info('=== All Environment Variables ===');
-Object.keys(process.env)
-  .sort()
-  .forEach(key => {
-    const value = process.env[key];
-    info(`${key}=${value}`);
-  });
-
-// Print GitHub-specific environment variables in a separate section
-startGroup('GitHub-specific Environment Variables');
-const githubVars = Object.keys(process.env)
-  .filter(key => key.startsWith('GITHUB_'))
-  .sort();
-
-if (githubVars.length > 0) {
-  info('=== GitHub Environment Variables ===');
-  githubVars.forEach(key => {
-    const value = process.env[key];
-    info(`${key}=${value}`);
-  });
-} else {
-  info('No GitHub-specific environment variables found');
+/**
+ * Interface for key-value pairs
+ */
+interface KeyValuePair {
+  key: string;
+  value: string;
 }
 
-endGroup();
-endGroup();
+/**
+ * Interface for environment variables result with metadata
+ */
+interface EnvironmentVariablesResult {
+  envVars: KeyValuePair[];
+  maxValueSize: number;
+}
 
-// Print runner environment info
-startGroup('Runner Information');
-info(`Node.js version: ${process.version}`);
-info(`Platform: ${process.platform}`);
-info(`Architecture: ${process.arch}`);
-info(`Working Directory: ${process.cwd()}`);
-endGroup();
+/**
+ * Gets all environment variables as a list of key-value pairs
+ * @returns Object containing array of key-value pairs sorted by key and max value size
+ */
+function getAllEnvironmentVariables(): EnvironmentVariablesResult {
+  const envVars = Object.keys(process.env)
+    .sort()
+    .map(key => ({
+      key,
+      value: process.env[key] || ''
+    }));
+
+  const maxValueSize = envVars.reduce((max, { value }) => 
+    Math.max(max, value.length), 0
+  );
+
+  return {
+    envVars,
+    maxValueSize
+  };
+}
+
+/**
+ * Prints a greeting message with the provided name
+ */
+function printGreeting(): void {
+  const name = getInput('name');
+  console.log(`Hello ${name}!`);
+}
+
+/**
+ * Prints all environment variables in alphabetical order
+ */
+function printAllEnvironmentVariables(): void {
+  info('=== All Environment Variables ===');
+  const { envVars, maxValueSize } = getAllEnvironmentVariables();
+  //info(`Total environment variables: ${envVars.length}`);
+  //info(`Maximum value size: ${maxValueSize} characters`);
+  //info('');
+  
+  let previousPrefix = '';
+  envVars.forEach(({ key, value }) => {
+    // Get the prefix (part before first underscore)
+    const currentPrefix = key.split('_')[0];
+    
+    // Add empty line if prefix changed and it's not the first item
+    if (previousPrefix && currentPrefix !== previousPrefix) {
+      info('');
+    }
+    
+    var space = '.'.repeat(maxValueSize - value.length + 3);
+    info(`${key} ${space} ${value}`);
+    
+    // Update previous prefix for next iteration
+    previousPrefix = currentPrefix;
+  });
+}
+
+/**
+ * Prints runner environment information
+ */
+function printRunnerInformation(): void {
+  info(`Node.js version: ${process.version}`);
+  info(`Platform: ${process.platform}`);
+  info(`Architecture: ${process.arch}`);
+  info(`Working Directory: ${process.cwd()}`);
+}
+
+/**
+ * Main function that orchestrates the action execution
+ */
+function run(): void {
+  try {
+    // Print greeting
+    printGreeting();
+
+    // Print runner information
+    startGroup('Runner Information');
+    printRunnerInformation();
+    endGroup();
+
+    // Print environment variables in grouped format
+    startGroup('Environment Variables');
+    printAllEnvironmentVariables();
+    endGroup();
+  } catch (error) {
+    console.error('Error running action:', error);
+    process.exit(1);
+  }
+}
+
+// Execute the main function
+run();
