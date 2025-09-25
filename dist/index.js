@@ -27603,8 +27603,8 @@ function printAllEnvironmentVariables() {
         if (previousPrefix && currentPrefix !== previousPrefix) {
             (0, core_1.info)('');
         }
-        var space = '.'.repeat(maxValueSize - value.length + 3);
-        (0, core_1.info)(`${key} ${space} ${value}`);
+        //var space = '.'.repeat(maxValueSize - value.length + 3);
+        (0, core_1.info)(`${key} = ${value}`);
         // Update previous prefix for next iteration
         previousPrefix = currentPrefix;
     });

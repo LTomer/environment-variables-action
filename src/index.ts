@@ -66,8 +66,8 @@ function printAllEnvironmentVariables(): void {
       info('');
     }
     
-    var space = '.'.repeat(maxValueSize - value.length + 3);
-    info(`${key} ${space} ${value}`);
+    //var space = '.'.repeat(maxValueSize - value.length + 3);
+    info(`${key} = ${value}`);
     
     // Update previous prefix for next iteration
     previousPrefix = currentPrefix;
