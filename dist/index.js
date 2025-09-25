@@ -27636,11 +27636,11 @@ function printAllEnvironmentVariables() {
     multipleVarPrefixes.sort();
     // Print single variables in generic group
     singleVars.sort((a, b) => a.key.localeCompare(b.key));
-    printVariablesToScreen(' Variables', singleVars);
+    printVariablesToScreen(` Variables (${singleVars.length})`, singleVars);
     // Print groups with multiple variables
     multipleVarPrefixes.forEach(prefix => {
         const vars = groupedVars.get(prefix);
-        printVariablesToScreen(` ${prefix} Variables`, vars);
+        printVariablesToScreen(` ${prefix} Variables (${vars.length})`, vars);
     });
 }
 /**
