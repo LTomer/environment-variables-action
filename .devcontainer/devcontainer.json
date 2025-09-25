@@ -1,0 +1,28 @@
+{
+  "name": "GitHub Actions (TypeScript)",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:24",
+  "postCreateCommand": "npm install",
+  "customizations": {
+    "codespaces": {
+      "openFiles": ["README.md"]
+    },
+    "vscode": {
+      "extensions": [],
+      "settings": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.tabSize": 2,
+        "editor.formatOnSave": true,
+        "markdown.extension.list.indentationSize": "adaptive",
+        "markdown.extension.italic.indicator": "_",
+        "markdown.extension.orderedList.marker": "one",
+        "files.associations": {
+          "*.yml": "yaml"
+        }
+      }
+    }
+  },
+  "remoteEnv": {
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
+  },
+  "features": {}
+}
