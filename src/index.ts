@@ -71,6 +71,7 @@ function printAllEnvironmentVariables(): void {
     singleVars.forEach(({ key, value }) => {
       info(`${key} = ${value}`);
     });
+    info('')
     endGroup();
   }
   
@@ -81,6 +82,7 @@ function printAllEnvironmentVariables(): void {
     vars.forEach(({ key, value }) => {
       info(`${key} = ${value}`);
     });
+    info('')
     endGroup();
   });
 }
@@ -133,7 +135,7 @@ function run(): void {
     endGroup();
 
     info('')
-    
+
     // Print environment variables in grouped format
     printAllEnvironmentVariables();
   } catch (error) {

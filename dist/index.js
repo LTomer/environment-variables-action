@@ -27617,6 +27617,7 @@ function printAllEnvironmentVariables() {
         singleVars.forEach(({ key, value }) => {
             (0, core_1.info)(`${key} = ${value}`);
         });
+        (0, core_1.info)('');
         (0, core_1.endGroup)();
     }
     // Print groups with multiple variables
@@ -27626,6 +27627,7 @@ function printAllEnvironmentVariables() {
         vars.forEach(({ key, value }) => {
             (0, core_1.info)(`${key} = ${value}`);
         });
+        (0, core_1.info)('');
         (0, core_1.endGroup)();
     });
 }
