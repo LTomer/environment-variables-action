@@ -1,0 +1,7 @@
+name: 'My Custom Action'
+description: 'Say Hello'
+author: 'LTomer'
+
+runs:
+  using: 'node24'
+  main: 'dist/index.js'
