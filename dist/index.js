@@ -27596,11 +27596,11 @@ function printAllEnvironmentVariables() {
     //info(`Maximum value size: ${maxValueSize} characters`);
     //info('');
     let previousPrefix = '';
-    envVars.forEach(({ key, value }) => {
-        // Get the prefix (part before first underscore)
-        const currentPrefix = key.split('_')[0];
+    envVars.forEach(({ key, value }, index) => {
+        // Get the prefix (part before first underscore, or the whole key if no underscore)
+        const currentPrefix = key.includes('_') ? key.split('_')[0] : key;
         // Add empty line if prefix changed and it's not the first item
-        if (previousPrefix && currentPrefix !== previousPrefix) {
+        if (index > 0 && currentPrefix !== previousPrefix) {
             (0, core_1.info)('');
         }
         //var space = '.'.repeat(maxValueSize - value.length + 3);
