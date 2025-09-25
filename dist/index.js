@@ -27574,6 +27574,32 @@ function getAllEnvironmentVariables() {
         value: process.env[key] || ''
     }));
 }
+// /**
+//  * Prints a greeting message with the provided name
+//  */
+// function printGreeting(): void {
+//   const name = getInput('name');
+//   console.log(`Hello ${name}!`);
+// }
+/**
+ * Prints a list of key-value pairs to screen in a grouped format
+ * @param title - The title for the group
+ * @param vars - Array of key-value pairs to print
+ */
+function printVariablesToScreen(title, vars) {
+    if (vars.length === 0)
+        return;
+    (0, core_1.startGroup)(title);
+    // Find the maximum key length for alignment
+    const maxKeyLength = vars.reduce((max, { key }) => Math.max(max, key.length), 0);
+    vars.forEach(({ key, value }) => {
+        // Pad the key to align equal signs
+        const paddedKey = key.padEnd(maxKeyLength);
+        (0, core_1.info)(`${paddedKey} = ${value}`);
+    });
+    (0, core_1.info)('');
+    (0, core_1.endGroup)();
+}
 /**
  * Prints all environment variables grouped by prefix
  */
@@ -27609,26 +27635,12 @@ function printAllEnvironmentVariables() {
     // Sort prefixes alphabetically
     multipleVarPrefixes.sort();
     // Print single variables in generic group
-    if (singleVars.length > 0) {
-        // info('');
-        // info('--- Variables ---');
-        (0, core_1.startGroup)(` > Variables`);
-        singleVars.sort((a, b) => a.key.localeCompare(b.key));
-        singleVars.forEach(({ key, value }) => {
-            (0, core_1.info)(`${key} = ${value}`);
-        });
-        (0, core_1.info)('');
-        (0, core_1.endGroup)();
-    }
+    singleVars.sort((a, b) => a.key.localeCompare(b.key));
+    printVariablesToScreen(' Variables', singleVars);
     // Print groups with multiple variables
     multipleVarPrefixes.forEach(prefix => {
-        (0, core_1.startGroup)(` > ${prefix} Variables`);
         const vars = groupedVars.get(prefix);
-        vars.forEach(({ key, value }) => {
-            (0, core_1.info)(`${key} = ${value}`);
-        });
-        (0, core_1.info)('');
-        (0, core_1.endGroup)();
+        printVariablesToScreen(` ${prefix} Variables`, vars);
     });
 }
 /**
@@ -27636,10 +27648,14 @@ function printAllEnvironmentVariables() {
  */
 function printRunnerInformation() {
     var _a;
+    // Basic runner information (always visible)
+    (0, core_1.startGroup)('Runner Information');
     (0, core_1.info)(`Node.js version: ${process.version}`);
     (0, core_1.info)(`Platform: ${process.platform}`);
     (0, core_1.info)(`Architecture: ${process.arch}`);
     (0, core_1.info)(`Working Directory: ${process.cwd()}`);
+    // Debug information in a collapsible group
+    (0, core_1.startGroup)('Debug Information');
     (0, core_1.info)(`Process ID: ${process.pid}`);
     (0, core_1.info)(`Parent Process ID: ${process.ppid}`);
     (0, core_1.info)(`User ID: ${process.getuid ? process.getuid() : 'N/A'}`);
@@ -27667,6 +27683,8 @@ function printRunnerInformation() {
             (0, core_1.info)(`OS Info Error: ${error}`);
         }
     }
+    (0, core_1.endGroup)();
+    (0, core_1.endGroup)();
 }
 /**
  * Main function that orchestrates the action execution
@@ -27674,9 +27692,7 @@ function printRunnerInformation() {
 function run() {
     try {
         // Print runner information
-        (0, core_1.startGroup)('Runner Information');
         printRunnerInformation();
-        (0, core_1.endGroup)();
         (0, core_1.info)('');
         // Print environment variables in grouped format
         printAllEnvironmentVariables();

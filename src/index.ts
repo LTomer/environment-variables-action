@@ -21,6 +21,37 @@ function getAllEnvironmentVariables(): KeyValuePair[] {
     }));
 }
 
+// /**
+//  * Prints a greeting message with the provided name
+//  */
+// function printGreeting(): void {
+//   const name = getInput('name');
+//   console.log(`Hello ${name}!`);
+// }
+
+/**
+ * Prints a list of key-value pairs to screen in a grouped format
+ * @param title - The title for the group
+ * @param vars - Array of key-value pairs to print
+ */
+function printVariablesToScreen(title: string, vars: KeyValuePair[]): void {
+  if (vars.length === 0) return;
+  
+  startGroup(title);
+  
+  // Find the maximum key length for alignment
+  const maxKeyLength = vars.reduce((max, { key }) => Math.max(max, key.length), 0);
+  
+  vars.forEach(({ key, value }) => {
+    // Pad the key to align equal signs
+    const paddedKey = key.padEnd(maxKeyLength);
+    info(`${paddedKey} = ${value}`);
+  });
+  
+  info('');
+  endGroup();
+}
+
 /**
  * Prints all environment variables grouped by prefix
  */
@@ -63,27 +94,13 @@ function printAllEnvironmentVariables(): void {
   multipleVarPrefixes.sort();
   
   // Print single variables in generic group
-  if (singleVars.length > 0) {
-    // info('');
-    // info('--- Variables ---');
-    startGroup(` > Variables`);
-    singleVars.sort((a, b) => a.key.localeCompare(b.key));
-    singleVars.forEach(({ key, value }) => {
-      info(`${key} = ${value}`);
-    });
-    info('')
-    endGroup();
-  }
+  singleVars.sort((a, b) => a.key.localeCompare(b.key));
+  printVariablesToScreen(' Variables', singleVars);
   
   // Print groups with multiple variables
   multipleVarPrefixes.forEach(prefix => {
-    startGroup(` > ${prefix} Variables`);
     const vars = groupedVars.get(prefix)!;
-    vars.forEach(({ key, value }) => {
-      info(`${key} = ${value}`);
-    });
-    info('')
-    endGroup();
+    printVariablesToScreen(` ${prefix} Variables`, vars);
   });
 }
 
@@ -91,10 +108,15 @@ function printAllEnvironmentVariables(): void {
  * Prints runner environment information
  */
 function printRunnerInformation(): void {
+  // Basic runner information (always visible)
+  startGroup('Runner Information');
   info(`Node.js version: ${process.version}`);
   info(`Platform: ${process.platform}`);
   info(`Architecture: ${process.arch}`);
   info(`Working Directory: ${process.cwd()}`);
+  
+  // Debug information in a collapsible group
+  startGroup('Debug Information');
   info(`Process ID: ${process.pid}`);
   info(`Parent Process ID: ${process.ppid}`);
   info(`User ID: ${process.getuid ? process.getuid() : 'N/A'}`);
@@ -122,6 +144,9 @@ function printRunnerInformation(): void {
       info(`OS Info Error: ${error}`);
     }
   }
+  
+  endGroup();
+  endGroup();
 }
 
 /**
@@ -130,9 +155,7 @@ function printRunnerInformation(): void {
 function run(): void {
   try {
     // Print runner information
-    startGroup('Runner Information');
     printRunnerInformation();
-    endGroup();
 
     info('')
 
