@@ -45,7 +45,24 @@ function printVariablesToScreen(title: string, vars: KeyValuePair[]): void {
   vars.forEach(({ key, value }) => {
     // Pad the key to align equal signs
     const paddedKey = key.padEnd(maxKeyLength);
-    info(`${paddedKey} = ${value}`);
+    
+    // Handle multi-line values
+    if (value.includes('\n')) {
+      const lines = value.split('\n');
+      const firstLine = lines[0];
+      const indent = ' '.repeat(maxKeyLength + 3); // key length + ' = ' length
+      
+      // Print first line with key
+      info(`${paddedKey} = ${firstLine}`);
+      
+      // Print continuation lines with proper indentation
+      lines.slice(1).forEach(line => {
+        info(`${indent}${line}`);
+      });
+    } else {
+      // Single line value
+      info(`${paddedKey} = ${value}`);
+    }
   });
   
   info('');

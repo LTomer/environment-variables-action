@@ -27595,7 +27595,22 @@ function printVariablesToScreen(title, vars) {
     vars.forEach(({ key, value }) => {
         // Pad the key to align equal signs
         const paddedKey = key.padEnd(maxKeyLength);
-        (0, core_1.info)(`${paddedKey} = ${value}`);
+        // Handle multi-line values
+        if (value.includes('\n')) {
+            const lines = value.split('\n');
+            const firstLine = lines[0];
+            const indent = ' '.repeat(maxKeyLength + 3); // key length + ' = ' length
+            // Print first line with key
+            (0, core_1.info)(`${paddedKey} = ${firstLine}`);
+            // Print continuation lines with proper indentation
+            lines.slice(1).forEach(line => {
+                (0, core_1.info)(`${indent}${line}`);
+            });
+        }
+        else {
+            // Single line value
+            (0, core_1.info)(`${paddedKey} = ${value}`);
+        }
     });
     (0, core_1.info)('');
     (0, core_1.endGroup)();
