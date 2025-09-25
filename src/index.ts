@@ -9,49 +9,23 @@ interface KeyValuePair {
 }
 
 /**
- * Interface for environment variables result with metadata
- */
-interface EnvironmentVariablesResult {
-  envVars: KeyValuePair[];
-  maxValueSize: number;
-}
-
-/**
  * Gets all environment variables as a list of key-value pairs
- * @returns Object containing array of key-value pairs sorted by key and max value size
+ * @returns Array of key-value pairs sorted by key
  */
-function getAllEnvironmentVariables(): EnvironmentVariablesResult {
-  const envVars = Object.keys(process.env)
+function getAllEnvironmentVariables(): KeyValuePair[] {
+  return Object.keys(process.env)
     .sort()
     .map(key => ({
       key,
       value: process.env[key] || ''
     }));
-
-  const maxValueSize = envVars.reduce((max, { value }) => 
-    Math.max(max, value.length), 0
-  );
-
-  return {
-    envVars,
-    maxValueSize
-  };
-}
-
-/**
- * Prints a greeting message with the provided name
- */
-function printGreeting(): void {
-  const name = getInput('name');
-  console.log(`Hello ${name}!`);
 }
 
 /**
  * Prints all environment variables grouped by prefix
  */
 function printAllEnvironmentVariables(): void {
-  info('=== All Environment Variables ===');
-  const { envVars, maxValueSize } = getAllEnvironmentVariables();
+  const envVars = getAllEnvironmentVariables();
   
   // Group environment variables by prefix and separate single variables
   const groupedVars = new Map<string, KeyValuePair[]>();
@@ -92,7 +66,7 @@ function printAllEnvironmentVariables(): void {
   if (singleVars.length > 0) {
     // info('');
     // info('--- Variables ---');
-    startGroup(`--- Variables ---`);
+    startGroup(` > Variables`);
     singleVars.sort((a, b) => a.key.localeCompare(b.key));
     singleVars.forEach(({ key, value }) => {
       info(`${key} = ${value}`);
@@ -102,10 +76,7 @@ function printAllEnvironmentVariables(): void {
   
   // Print groups with multiple variables
   multipleVarPrefixes.forEach(prefix => {
-    // info('');
-    // info(`--- ${prefix} Variables ---`);
-
-    startGroup(`--- ${prefix} Variables ---`);
+    startGroup(` > ${prefix} Variables`);
     const vars = groupedVars.get(prefix)!;
     vars.forEach(({ key, value }) => {
       info(`${key} = ${value}`);
@@ -122,6 +93,33 @@ function printRunnerInformation(): void {
   info(`Platform: ${process.platform}`);
   info(`Architecture: ${process.arch}`);
   info(`Working Directory: ${process.cwd()}`);
+  info(`Process ID: ${process.pid}`);
+  info(`Parent Process ID: ${process.ppid}`);
+  info(`User ID: ${process.getuid ? process.getuid() : 'N/A'}`);
+  info(`Group ID: ${process.getgid ? process.getgid() : 'N/A'}`);
+  info(`Memory Usage: ${JSON.stringify(process.memoryUsage(), null, 2)}`);
+  info(`CPU Usage: ${JSON.stringify(process.cpuUsage(), null, 2)}`);
+  info(`Uptime: ${process.uptime()} seconds`);
+  info(`Command Line Args: ${JSON.stringify(process.argv)}`);
+  info(`Node.js Executable Path: ${process.execPath}`);
+  info(`Node.js Execute Arguments: ${JSON.stringify(process.execArgv)}`);
+  
+  // Additional system information
+  if (process.platform !== 'win32') {
+    try {
+      const os = require('os');
+      info(`OS Type: ${os.type()}`);
+      info(`OS Release: ${os.release()}`);
+      info(`OS Hostname: ${os.hostname()}`);
+      info(`OS Total Memory: ${(os.totalmem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
+      info(`OS Free Memory: ${(os.freemem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
+      info(`OS Load Average: ${JSON.stringify(os.loadavg())}`);
+      info(`OS CPU Count: ${os.cpus().length}`);
+      info(`OS CPU Model: ${os.cpus()[0]?.model || 'Unknown'}`);
+    } catch (error) {
+      info(`OS Info Error: ${error}`);
+    }
+  }
 }
 
 /**
@@ -129,18 +127,15 @@ function printRunnerInformation(): void {
  */
 function run(): void {
   try {
-    // Print greeting
-    printGreeting();
-
     // Print runner information
     startGroup('Runner Information');
     printRunnerInformation();
     endGroup();
 
+    info('')
+    
     // Print environment variables in grouped format
-    // startGroup('Environment Variables');
     printAllEnvironmentVariables();
-    // endGroup();
   } catch (error) {
     console.error('Error running action:', error);
     process.exit(1);

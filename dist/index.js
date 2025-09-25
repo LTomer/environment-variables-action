@@ -27564,34 +27564,21 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core_1 = __nccwpck_require__(7484);
 /**
  * Gets all environment variables as a list of key-value pairs
- * @returns Object containing array of key-value pairs sorted by key and max value size
+ * @returns Array of key-value pairs sorted by key
  */
 function getAllEnvironmentVariables() {
-    const envVars = Object.keys(process.env)
+    return Object.keys(process.env)
         .sort()
         .map(key => ({
         key,
         value: process.env[key] || ''
     }));
-    const maxValueSize = envVars.reduce((max, { value }) => Math.max(max, value.length), 0);
-    return {
-        envVars,
-        maxValueSize
-    };
-}
-/**
- * Prints a greeting message with the provided name
- */
-function printGreeting() {
-    const name = (0, core_1.getInput)('name');
-    console.log(`Hello ${name}!`);
 }
 /**
  * Prints all environment variables grouped by prefix
  */
 function printAllEnvironmentVariables() {
-    (0, core_1.info)('=== All Environment Variables ===');
-    const { envVars, maxValueSize } = getAllEnvironmentVariables();
+    const envVars = getAllEnvironmentVariables();
     // Group environment variables by prefix and separate single variables
     const groupedVars = new Map();
     const singleVars = [];
@@ -27625,7 +27612,7 @@ function printAllEnvironmentVariables() {
     if (singleVars.length > 0) {
         // info('');
         // info('--- Variables ---');
-        (0, core_1.startGroup)(`--- Variables ---`);
+        (0, core_1.startGroup)(` > Variables`);
         singleVars.sort((a, b) => a.key.localeCompare(b.key));
         singleVars.forEach(({ key, value }) => {
             (0, core_1.info)(`${key} = ${value}`);
@@ -27634,9 +27621,7 @@ function printAllEnvironmentVariables() {
     }
     // Print groups with multiple variables
     multipleVarPrefixes.forEach(prefix => {
-        // info('');
-        // info(`--- ${prefix} Variables ---`);
-        (0, core_1.startGroup)(`--- ${prefix} Variables ---`);
+        (0, core_1.startGroup)(` > ${prefix} Variables`);
         const vars = groupedVars.get(prefix);
         vars.forEach(({ key, value }) => {
             (0, core_1.info)(`${key} = ${value}`);
@@ -27648,26 +27633,51 @@ function printAllEnvironmentVariables() {
  * Prints runner environment information
  */
 function printRunnerInformation() {
+    var _a;
     (0, core_1.info)(`Node.js version: ${process.version}`);
     (0, core_1.info)(`Platform: ${process.platform}`);
     (0, core_1.info)(`Architecture: ${process.arch}`);
     (0, core_1.info)(`Working Directory: ${process.cwd()}`);
+    (0, core_1.info)(`Process ID: ${process.pid}`);
+    (0, core_1.info)(`Parent Process ID: ${process.ppid}`);
+    (0, core_1.info)(`User ID: ${process.getuid ? process.getuid() : 'N/A'}`);
+    (0, core_1.info)(`Group ID: ${process.getgid ? process.getgid() : 'N/A'}`);
+    (0, core_1.info)(`Memory Usage: ${JSON.stringify(process.memoryUsage(), null, 2)}`);
+    (0, core_1.info)(`CPU Usage: ${JSON.stringify(process.cpuUsage(), null, 2)}`);
+    (0, core_1.info)(`Uptime: ${process.uptime()} seconds`);
+    (0, core_1.info)(`Command Line Args: ${JSON.stringify(process.argv)}`);
+    (0, core_1.info)(`Node.js Executable Path: ${process.execPath}`);
+    (0, core_1.info)(`Node.js Execute Arguments: ${JSON.stringify(process.execArgv)}`);
+    // Additional system information
+    if (process.platform !== 'win32') {
+        try {
+            const os = __nccwpck_require__(857);
+            (0, core_1.info)(`OS Type: ${os.type()}`);
+            (0, core_1.info)(`OS Release: ${os.release()}`);
+            (0, core_1.info)(`OS Hostname: ${os.hostname()}`);
+            (0, core_1.info)(`OS Total Memory: ${(os.totalmem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
+            (0, core_1.info)(`OS Free Memory: ${(os.freemem() / 1024 / 1024 / 1024).toFixed(2)} GB`);
+            (0, core_1.info)(`OS Load Average: ${JSON.stringify(os.loadavg())}`);
+            (0, core_1.info)(`OS CPU Count: ${os.cpus().length}`);
+            (0, core_1.info)(`OS CPU Model: ${((_a = os.cpus()[0]) === null || _a === void 0 ? void 0 : _a.model) || 'Unknown'}`);
+        }
+        catch (error) {
+            (0, core_1.info)(`OS Info Error: ${error}`);
+        }
+    }
 }
 /**
  * Main function that orchestrates the action execution
  */
 function run() {
     try {
-        // Print greeting
-        printGreeting();
         // Print runner information
         (0, core_1.startGroup)('Runner Information');
         printRunnerInformation();
         (0, core_1.endGroup)();
+        (0, core_1.info)('');
         // Print environment variables in grouped format
-        // startGroup('Environment Variables');
         printAllEnvironmentVariables();
-        // endGroup();
     }
     catch (error) {
         console.error('Error running action:', error);
