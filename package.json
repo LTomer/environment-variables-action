@@ -1,5 +1,5 @@
 {
-  "name": "environment-variables-action",
+  "name": "env-inspector",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -12,6 +12,7 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@types/node": "^24.7.1",
     "typescript": "^5.9.2"
   },
   "dependencies": {
