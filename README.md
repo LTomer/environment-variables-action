@@ -29,20 +29,20 @@ jobs:
       uses: actions/checkout@v4
       
     - name: Show Environment Variables
-      uses: LTomer/env-inspector@v1
+      uses: LTomer/env-inspector-action@v1
 ```
 
 ### Version Pinning Options
 
 ```yaml
 # Use latest v1.x.x version (recommended for most users)
-- uses: LTomer/env-inspector@v1
+- uses: LTomer/env-inspector-action@v1
 
 # Pin to specific version (recommended for production)
-- uses: LTomer/env-inspector@v1.0.0
+- uses: LTomer/env-inspector-action@v1.0.0
 
 # Use specific commit (most secure)
-- uses: LTomer/env-inspector@abc123
+- uses: LTomer/env-inspector-action@abc123
 ```
 
 ## What This Action Does
@@ -157,7 +157,7 @@ This repository includes a **Dev Container** configuration that provides a pre-c
 1. **Clone and setup**:
    ```bash
    git clone <repository-url>
-   cd env-inspector
+   cd env-inspector-action
    npm install
    ```
 
@@ -176,7 +176,7 @@ This repository includes a **Dev Container** configuration that provides a pre-c
 ## Project Structure
 
 ```
-env-inspector/
+env-inspector-action/
 ├── src/
 │   └── index.ts          # Main TypeScript source code
 ├── lib/
