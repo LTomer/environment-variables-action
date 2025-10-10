@@ -1,5 +1,6 @@
-name: 'Environment Variables'
-description: 'Shows all environment variables grouped by prefix'
+name: 'Environment Inspector'
+description: 'Displays comprehensive environment variables and system information for GitHub Actions debugging'
+
 author: 'LTomer'
 
 runs:

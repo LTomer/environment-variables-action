@@ -21,14 +21,6 @@ function getAllEnvironmentVariables(): KeyValuePair[] {
     }));
 }
 
-// /**
-//  * Prints a greeting message with the provided name
-//  */
-// function printGreeting(): void {
-//   const name = getInput('name');
-//   console.log(`Hello ${name}!`);
-// }
-
 /**
  * Prints a list of key-value pairs to screen in a grouped format
  * @param title - The title for the group
@@ -122,7 +114,7 @@ function printAllEnvironmentVariables(): void {
 }
 
 /**
- * Prints runner environment information
+ * Prints runner information
  */
 function printRunnerInformation(): void {
   // Basic runner information
