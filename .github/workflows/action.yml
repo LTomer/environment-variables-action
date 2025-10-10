@@ -1,4 +1,4 @@
-name: Print GitHub Environment Variables
+name: Check Environment Variables Custom Action
 
 on:
   workflow_dispatch:
@@ -9,5 +9,5 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: ./
-
+      - name: 'Environment Variables'
+        uses: ./
