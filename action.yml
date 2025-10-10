@@ -1,5 +1,6 @@
 name: 'Environment Inspector'
 description: 'Displays comprehensive environment variables and system information for GitHub Actions debugging'
+
 author: 'LTomer'
 
 runs:
