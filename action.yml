@@ -1,13 +1,11 @@
-name: 'My Custom Action'
-description: 'Say Hello'
+name: 'Environment Variables'
+description: 'Shows all environment variables grouped by prefix'
 author: 'LTomer'
 
-inputs:
-  name:
-    description: 'The name of the person to greet'
-    required: true
-    default: 'World'
-    
 runs:
   using: 'node24'
   main: 'dist/index.js'
+
+branding:
+  icon: 'activity'
+  color: 'green'
